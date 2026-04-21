@@ -105,6 +105,13 @@ switch (type) {
 char header_str[64];
 int header_len = snprintf(header_str, sizeof(header_str), "%s %zu", type_str, len);
 if (header_len < 0 || (size_t)header_len >= sizeof(header_str)) return -1;
+size_t full_len = (size_t)header_len + 1 + len;
+unsigned char *buf = malloc(full_len);
+if (!buf) return -1;
+
+memcpy(buf, header_str, (size_t)header_len);
+buf[header_len] = '\0';
+memcpy(buf + header_len + 1, data, len);
 }
 
 // Read an object from the store.
