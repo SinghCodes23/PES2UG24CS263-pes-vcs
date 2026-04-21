@@ -112,6 +112,12 @@ if (!buf) return -1;
 memcpy(buf, header_str, (size_t)header_len);
 buf[header_len] = '\0';
 memcpy(buf + header_len + 1, data, len);
+compute_hash(buf, full_len, id_out);
+
+if (object_exists(id_out)) {
+    free(buf);
+    return 0;
+}
 }
 
 // Read an object from the store.
