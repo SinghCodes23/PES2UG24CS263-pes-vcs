@@ -180,10 +180,10 @@ return 0;
 //
 // Returns 0 on success, -1 on error.
 int index_save(const Index *index) {
-    // TODO: Implement atomic index saving
-    // (See Lab Appendix for logical steps)
-    (void)index;
-    return -1;
+    Index *sorted = malloc(sizeof(Index));
+if (!sorted) return -1;
+
+*sorted = *index;
 }
 
 // Stage a file for the next commit.
