@@ -134,6 +134,30 @@ if (mkdir(shard_dir, 0755) < 0 && errno != EEXIST) {
     free(buf);
     return -1;
 }
+int fd = open(tmp_path, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+if (fd < 0) { free(buf); return -1; }
+
+size_t written = 0;
+while (written < full_len) {
+    ssize_t n = write(fd, buf + written, full_len - written);
+    if (n < 0) { close(fd); unlink(tmp_path); free(buf); return -1; }
+    written += (size_t)n;
+}
+
+free(buf);
+
+if (fsync(fd) < 0) { close(fd); unlink(tmp_path); return -1; }
+close(fd);
+
+if (rename(tmp_path, final_path) < 0) {
+    unlink(tmp_path);
+    return -1;
+}
+
+int dir_fd = open(shard_dir, O_RDONLY);
+if (dir_fd >= 0) { fsync(dir_fd); close(dir_fd); }
+
+return 0;
 }
 
 // Read an object from the store.
