@@ -184,6 +184,33 @@ int index_save(const Index *index) {
 if (!sorted) return -1;
 
 *sorted = *index;
+qsort(sorted->entries, (size_t)sorted->count,
+      sizeof(IndexEntry),
+      compare_index_entries);
+
+const char *tmp_path = INDEX_FILE ".tmp";
+FILE *f = fopen(tmp_path, "w");
+if (!f) { free(sorted); return -1; }
+
+for (int i = 0; i < sorted->count; i++) {
+    const IndexEntry *e = &sorted->entries[i];
+    char hex[HASH_HEX_SIZE + 1];
+    hash_to_hex(&e->hash, hex);
+
+    fprintf(f, "%o %s %llu %u %s\n",
+            e->mode,
+            hex,
+            (unsigned long long)e->mtime_sec,
+            e->size,
+            e->path);
+}
+
+fflush(f);
+fsync(fileno(f));
+fclose(f);
+free(sorted);
+
+return rename(tmp_path, INDEX_FILE);
 }
 
 // Stage a file for the next commit.
