@@ -207,5 +207,10 @@ c.timestamp = (uint64_t)time(NULL);
 snprintf(c.author, sizeof(c.author), "%s", pes_author());
 snprintf(c.message, sizeof(c.message), "%s", message);
 c.has_parent = (head_read(&c.parent) == 0) ? 1 : 0;
+void *commit_data;
+size_t commit_len;
+
+if (commit_serialize(&c, &commit_data, &commit_len) != 0)
+    return -1;
  }
 
