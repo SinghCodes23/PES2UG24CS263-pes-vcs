@@ -199,5 +199,12 @@ if (tree_from_index(&tree_id) != 0) {
     fprintf(stderr, "error: nothing staged to commit\n");
     return -1;
 } 
+Commit c;
+memset(&c, 0, sizeof(c));
+
+c.tree = tree_id;
+c.timestamp = (uint64_t)time(NULL);
+snprintf(c.author, sizeof(c.author), "%s", pes_author());
+snprintf(c.message, sizeof(c.message), "%s", message);
  }
 
