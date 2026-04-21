@@ -206,5 +206,6 @@ c.tree = tree_id;
 c.timestamp = (uint64_t)time(NULL);
 snprintf(c.author, sizeof(c.author), "%s", pes_author());
 snprintf(c.message, sizeof(c.message), "%s", message);
+c.has_parent = (head_read(&c.parent) == 0) ? 1 : 0;
  }
 
